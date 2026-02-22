@@ -1,26 +1,55 @@
+import pytest
 from app.main import get_human_age
 
 
-def test_should_return_zeros_when_ages_are_below_fifteen() -> None:
-    assert get_human_age(0, 0) == [0, 0]
-    assert get_human_age(14, 14) == [0, 0]
+@pytest.mark.parametrize(
+    "cat_age,dog_age,expected",
+    [
+        (0, 0, [0, 0]),
+        (14, 14, [0, 0]),
+        (15, 15, [1, 1]),
+        (23, 23, [1, 1]),
+        (24, 24, [2, 2]),
+        (27, 27, [2, 2]),
+        (28, 28, [3, 2]),
+        (100, 100, [21, 17]),
+    ]
+)
+def test_get_human_age_valid_cases(
+    cat_age: int,
+    dog_age: int,
+    expected: list
+) -> None:
+    assert get_human_age(cat_age, dog_age) == expected
 
 
-def test_should_return_one_year_at_fifteen() -> None:
-    assert get_human_age(15, 15) == [1, 1]
-    assert get_human_age(23, 23) == [1, 1]
+@pytest.mark.parametrize(
+    "cat_age,dog_age,expected",
+    [
+        (-1, -5, [0, 0]),
+        (-100, 0, [0, 0]),
+    ]
+)
+def test_get_human_age_negative_numbers(
+    cat_age: int,
+    dog_age: int,
+    expected: list
+) -> None:
+    assert get_human_age(cat_age, dog_age) == expected
 
 
-def test_should_return_two_years_at_twenty_four() -> None:
-    assert get_human_age(24, 24) == [2, 2]
-    assert get_human_age(27, 27) == [2, 2]
-
-
-def test_cat_and_dog_years_diverge_after_twenty_four() -> None:
-    # Kot: 28 lat -> 24 (2 lata) + 4 (1 rok) = 3 lata
-    # Pies: 28 lat -> 24 (2 lata) + 4 (wciąż w progu do 29) = 2 lata
-    assert get_human_age(28, 28) == [3, 2]
-
-
-def test_should_calculate_high_ages_correctly() -> None:
-    assert get_human_age(100, 100) == [21, 17]
+@pytest.mark.parametrize(
+    "cat_age,dog_age,exception",
+    [
+        ("15", 15, TypeError),
+        (None, 24, TypeError),
+        ([24], [24], TypeError),
+    ]
+)
+def test_get_human_age_invalid_types(
+    cat_age: any,
+    dog_age: any,
+    exception: type
+) -> None:
+    with pytest.raises(exception):
+        get_human_age(cat_age, dog_age)
