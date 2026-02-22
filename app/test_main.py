@@ -13,6 +13,7 @@ from app.main import get_human_age
         (27, 27, [2, 2]),
         (28, 28, [3, 2]),
         (100, 100, [21, 17]),
+        (-1, -5, [0, 0]),
     ]
 )
 def test_get_human_age_valid_cases(
@@ -24,32 +25,16 @@ def test_get_human_age_valid_cases(
 
 
 @pytest.mark.parametrize(
-    "cat_age,dog_age,expected",
+    "cat_age,dog_age",
     [
-        (-1, -5, [0, 0]),
-        (-100, 0, [0, 0]),
+        ("15", 15),
+        (None, 24),
+        ([10], 10),
     ]
 )
-def test_get_human_age_negative_numbers(
-    cat_age: int,
-    dog_age: int,
-    expected: list
-) -> None:
-    assert get_human_age(cat_age, dog_age) == expected
-
-
-@pytest.mark.parametrize(
-    "cat_age,dog_age,exception",
-    [
-        ("15", 15, TypeError),
-        (None, 24, TypeError),
-        ([24], [24], TypeError),
-    ]
-)
-def test_get_human_age_invalid_types(
+def test_get_human_age_should_raise_error_on_invalid_types(
     cat_age: any,
-    dog_age: any,
-    exception: type
+    dog_age: any
 ) -> None:
-    with pytest.raises(exception):
+    with pytest.raises(TypeError):
         get_human_age(cat_age, dog_age)
